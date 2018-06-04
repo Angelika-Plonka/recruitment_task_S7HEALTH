@@ -24,9 +24,9 @@ class Code
     private $code;
 
     /**
-     * @ORM\Column(type="datetime", options={"default"="CURRENT_TIMESTAMP"})
+     * @ORM\Column(name="data_added", type="datetime", options={"default"="CURRENT_TIMESTAMP"})
      */
-    private $data_added;
+    private $dataAdded;
 
     public function getId()
     {
@@ -47,13 +47,14 @@ class Code
 
     public function getDataAdded(): ?\DateTimeInterface
     {
-        return $this->data_added;
+        return $this->dataAdded;
     }
 
-    public function setDataAdded(\DateTimeInterface $data_added): self
+    public function setDataAdded(\DateTimeInterface $dataAdded): self
     {
-        $this->data_added = $data_added;
+        $this->dataAdded = $dataAdded;
 
         return $this;
     }
 }
+
