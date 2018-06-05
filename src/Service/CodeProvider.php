@@ -5,6 +5,7 @@ namespace App\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CodeRepository;
 use App\Entity\Code;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class CodeProvider
 {
@@ -14,10 +15,14 @@ class CodeProvider
     /** @var CodeRepository */
     protected $codeRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, CodeRepository $codeRepository)
+    /** @var SessionInterface */
+    protected $session;
+
+    public function __construct(EntityManagerInterface $entityManager, CodeRepository $codeRepository, SessionInterface $session)
     {
         $this->entityManager = $entityManager;
         $this->codeRepository = $this->entityManager->getRepository(Code::class);
+        $this->session = $session;
     }
 
     /** Get a list of codes in a database */
@@ -52,22 +57,41 @@ class CodeProvider
 
     /**
      *delete codes from database but firstly check if code exist in database (if not: throw a notice)
+     * @param string
      */
     public function deleteCodesFromDatabase(string $codes)
     {
         //convert a string given into an array of strings
         $convertCodes = preg_replace('/\s+/', '', $codes);
         $convertCodes = explode(',', $convertCodes);
-        print_r($convertCodes);
-        foreach ($convertCodes as $convertCode) {
-            $codeToDelete = $this->codeRepository->findOneByCode($convertCode);
-            if ($codeToDelete !== null) {
-                $this->entityManager->remove($codeToDelete);
+        $codesToDelete = [];
 
-            };
+        foreach ($convertCodes as $keyConvertCode => $valConvertCode) {
+            $codeToDelete = $this->codeRepository->findOneByCode($valConvertCode);
+            $codesToDelete[$valConvertCode] = $codeToDelete;
         }
-        $this->entityManager->flush();
 
+        foreach ($codesToDelete as $key => $val) {
+            $notExistingCodes = [];
+            if (is_null($codesToDelete[$key])) {
+                $notExistingCodes[] = $key;
+                $this->session->getFlashBag()->add(
+                    'error',
+                    "Not found code {$key}"
+                );
+            }
+        }
+        if (count($notExistingCodes) === 0) {
+            $this->session->getFlashBag()->add(
+                'notice',
+                "Codes was deleted"
+            );
+            foreach ($codesToDelete as $key => $val) {
+                $toRemove = $this->codeRepository->findOneByCode($key);
+                $this->entityManager->remove($toRemove);
+            }
+            $this->entityManager->flush();
+        }
     }
 
 }

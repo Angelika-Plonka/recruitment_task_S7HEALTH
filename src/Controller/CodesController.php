@@ -21,9 +21,10 @@ class CodesController extends Controller
                 'notice',
                 'Ten codes was added into database!'
             );
+
             return $this->redirectToRoute('codes');
+
         } elseif ($request->get('deleteCodes') === "delete") {
-//            echo htmlspecialchars($_POST['codesToDelete']);
             $codeProvider->deleteCodesFromDatabase($request->request->get('codesToDelete'));
         }
 
