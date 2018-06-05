@@ -27,9 +27,7 @@
                 <tr>
                     <td>{{ counter }}</td>
                     <td>{{ elem.code }}</td>
-                    <td>{{ elem.dataAdded.date }}</td>
-                    {#<td>{{ dump(elem.dataAdded) }}</td>#}
-
+                    <td>{{ elem.dataAdded.date |slice(0, 10) }}</td>
                 </tr>
             {% endfor %}
         </table>
