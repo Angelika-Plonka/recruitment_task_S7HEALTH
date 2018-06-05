@@ -7,13 +7,13 @@
                 <input type="hidden" name="addCodes" value="add"/>
                 <button class="btn btn-outline-success" type="submit">Dodaj 10 losowych kodów</button>
             </form>
-            <button class="btn btn-outline-success" type="button" onclick="displayCodesList()">Pokaż wszystkie kody</button>
-            <button class="btn btn-outline-success" type="button">Usuń kody</button>
+            <button class="btn btn-outline-success" type="button" onclick="displayCodesList()">Pokaż wszystkie kody
+            </button>
+            <button class="btn btn-outline-success" type="button" onclick="showDeleteField()">Usuń kody</button>
         </form>
     </nav>
     <div id="list" style="display:none">
         <h3>Lista kodów</h3>
-
         <table class="table">
             <tr>
                 <th>LP</th>
@@ -34,12 +34,28 @@
             {% endfor %}
         </table>
     </div>
+    <div id="deleteField" style="display:none; float: right">
+        <form method="post">
+            <input type="hidden" name="deleteCodes" value="delete"/>
+            <textarea name="codesToDelete" id="codesToDelete" rows="6" cols="40" maxlength="500"
+                      placeholder="Wpisz kody, które mają zostać usunięte. Oddziel je przecinkami."></textarea><br>
+            <button type="submit">USUŃ</button>
+        </form>
+    </div>
 
     {% block javascripts %}
         <script>
-            function displayCodesList(){
-                let list = document.getElementById("list");
+            const list = document.getElementById("list");
+            const deleteField = document.getElementById("deleteField");
+
+            function displayCodesList() {
                 list.style.display = 'block';
+                deleteField.style.display = 'none';
+            }
+
+            function showDeleteField() {
+                deleteField.style.display = 'block';
+                list.style.display = 'none';
             }
         </script>
     {% endblock %}

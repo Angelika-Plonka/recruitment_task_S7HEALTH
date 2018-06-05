@@ -27,6 +27,7 @@ class CodeProvider
     }
 
     /**
+     * create random 10 codes and save them into database
      * @return Code
      */
     public function createAndSaveTenCodesIntoDatabase(): Code
@@ -47,6 +48,26 @@ class CodeProvider
         }
         $this->entityManager->flush();
         return $code;
+    }
+
+    /**
+     *delete codes from database but firstly check if code exist in database (if not: throw a notice)
+     */
+    public function deleteCodesFromDatabase(string $codes)
+    {
+        //convert a string given into an array of strings
+        $convertCodes = preg_replace('/\s+/', '', $codes);
+        $convertCodes = explode(',', $convertCodes);
+        print_r($convertCodes);
+        foreach ($convertCodes as $convertCode) {
+            $codeToDelete = $this->codeRepository->findOneByCode($convertCode);
+            if ($codeToDelete !== null) {
+                $this->entityManager->remove($codeToDelete);
+
+            };
+        }
+        $this->entityManager->flush();
+
     }
 
 }
